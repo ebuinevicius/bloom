@@ -1,8 +1,14 @@
 import Head from 'next/head';
+import { ReactNode } from 'react';
 import Navbar from './Navbar';
-import NextThemeProvider from '~/context/NextThemeProvider';
+import NextThemeProvider from '../context/NextThemeProvider';
 
-export default function Layout({ children }) {
+type Props = {
+  children?: ReactNode;
+  // any props that come into the component
+};
+
+function Layout({ children }: Props) {
   return (
     <NextThemeProvider>
       <Head>
@@ -15,3 +21,5 @@ export default function Layout({ children }) {
     </NextThemeProvider>
   );
 }
+
+export default Layout;
