@@ -1,26 +1,25 @@
-import { signIn, signOut, useSession } from 'next-auth/react';
-import Head from 'next/head';
-import Link from 'next/link';
-import Navbar from '~/components/Navbar';
-import { api } from '~/utils/api';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 export default function Home() {
-  const hello = api.example.hello.useQuery({ text: 'from tRPC' });
+  const router = useRouter();
+  // const hello = api.example.hello.useQuery({ text: 'from tRPC' });
+  const { data: sessionData } = useSession();
 
-  return (
-    <>
-      <main className="min-h-screen bg-gradient-to-br from-[#2e026d] to-[#15162c]">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">{hello.data ? hello.data.greeting : 'Loading tRPC query...'}</p>
-            <AuthShowcase />
-          </div>
-        </div>
-      </main>
-    </>
-  );
+  useEffect(() => {
+    console.log(sessionData);
+    if (!sessionData) {
+      router.push('/signup');
+    }
+  }, []);
+
+  if (sessionData?.user !== undefined) {
+    return <>logged in</>;
+  }
+  return <>logged out</>;
 }
-
+/* 
 function AuthShowcase() {
   const { data: sessionData } = useSession();
   console.log('sessionData:', sessionData);
@@ -45,3 +44,4 @@ function AuthShowcase() {
     </div>
   );
 }
+ */
