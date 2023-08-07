@@ -1,16 +1,33 @@
-import { useSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
 export default function Home() {
   // const hello = api.example.hello.useQuery({ text: 'from tRPC' });
-  const { data: sessionData } = useSession();
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
+  if (status === 'loading') return <p>Loading</p>;
 
-  if (sessionData?.user !== undefined) {
-    return <>logged in</>;
+  return <div>{status}</div>;
+}
+
+export async function getServerSideProps(context: any) {
+  const session = await getSession(context);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/welcome',
+        permanent: false,
+      },
+    };
   }
-  return <>logged out</>;
+
+  return {
+    props: { session },
+  };
 }
 /* 
 function AuthShowcase() {
