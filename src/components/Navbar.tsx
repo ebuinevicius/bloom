@@ -12,7 +12,7 @@ function Navbar() {
         <div className="flex flex-row space-x-2 items-center">
           <ThemeSelector />
           <button
-            className="rounded bg-white/10 px-3 py-1 font-semibold text-white no-underline transition hover:bg-white/20"
+            className="rounded bg-gray-200 dark:bg-gray-800 px-3 py-1 font-semibold text-black dark:text-white no-underline transition hover:bg-white/20"
             onClick={sessionData ? () => void signOut() : () => void signIn()}
           >
             {sessionData ? 'Sign out' : 'Sign in'}
