@@ -3,16 +3,9 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
 export default function Home() {
-  const router = useRouter();
   // const hello = api.example.hello.useQuery({ text: 'from tRPC' });
   const { data: sessionData } = useSession();
 
-  useEffect(() => {
-    console.log(sessionData);
-    if (!sessionData) {
-      router.push('/signup');
-    }
-  }, []);
 
   if (sessionData?.user !== undefined) {
     return <>logged in</>;
