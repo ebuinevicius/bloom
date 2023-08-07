@@ -22,12 +22,13 @@
     }
   },
   "include": [
-    ".eslintrc.cjs",
+    ".eslintrc.js",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "**/*.cjs",
-    "**/*.mjs"
-  ],
+    "**/*.mjs",
+    "src/components/Navbar.jsx"
+, "src/pages/signin.js"  ],
   "exclude": ["node_modules"]
 }
