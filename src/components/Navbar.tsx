@@ -3,6 +3,7 @@ import { signIn, signOut, useSession } from 'next-auth/react';
 import ThemeSelector from './ThemeSelector';
 import { redirect } from 'next/navigation';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 function Navbar() {
   const { data: sessionData } = useSession();
@@ -11,7 +12,9 @@ function Navbar() {
   return (
     <nav className="bg-gray-100 border-gray-600 border-b-[1px] dark:bg-gray-900">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-around mx-auto p-2">
-        <h2 className="text-2xl font-bold">Bloom</h2>
+        <Link href="/" className="text-2xl font-bold">
+          Bloom
+        </Link>
         <div className="flex flex-row space-x-2 items-center">
           <ThemeSelector />
           <button
