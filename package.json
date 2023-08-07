@@ -38,6 +38,7 @@
     "autoprefixer": "^10.4.14",
     "eslint": "^8.46.0",
     "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.1.0",
     "eslint-config-next": "^13.4.2",
     "eslint-config-node": "^4.1.0",
     "eslint-config-prettier": "^9.0.0",
