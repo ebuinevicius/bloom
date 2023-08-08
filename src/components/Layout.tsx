@@ -1,4 +1,3 @@
-import Head from 'next/head';
 import { ReactNode } from 'react';
 import Navbar from './Navbar';
 import NextThemeProvider from '../context/NextThemeProvider';
@@ -11,9 +10,9 @@ type Props = {
 function Layout({ children }: Props) {
   return (
     <NextThemeProvider>
-      <div className="flex flex-col min-h-screen">
+      <div className="min-h-screen flex flex-col flex-grow min-w-full">
         <Navbar />
-        <main className="flex flex-grow justify-center items-center">{children}</main>
+        <div>{children}</div>
       </div>
     </NextThemeProvider>
   );
