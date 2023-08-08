@@ -1,6 +1,6 @@
 // CreatePostModal.tsx
 import React, { useState } from 'react';
-import { Button } from './Button';
+import { Button } from './buttons/Button';
 import { api } from '~/utils/api';
 
 interface CreatePostModalProps {
@@ -16,6 +16,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose }) =>
     onSuccess: async (newPost) => {
       console.log(newPost);
       await trpcUtils.post.infiniteFeed.invalidate();
+      await trpcUtils.user.getUserProfile.invalidate();
     },
   });
 
