@@ -42,7 +42,7 @@ function LikeButton({ post }: LikeButtonProps) {
         className={`flex  gap-2 rounded-md ${
           isLiked
             ? 'bg-green-600 dark:bg-green-300 hover:bg-green-700 dark:hover:bg-green-400'
-            : 'bg-slate-300 dark:bg-slate-800'
+            : 'bg-slate-300 hover:bg-slate-400 dark:bg-slate-700 dark:hover:bg-slate-600'
         } py-1 px-2`}
       >
         <HandThumbUpIcon
