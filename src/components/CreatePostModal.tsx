@@ -11,10 +11,11 @@ interface CreatePostModalProps {
 const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose }) => {
   const [content, setContent] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
-
+  const trpcUtils = api.useContext();
   const createPost = api.post.create.useMutation({
-    onSuccess: (newPost) => {
+    onSuccess: async (newPost) => {
       console.log(newPost);
+      await trpcUtils.post.infiniteFeed.invalidate();
     },
   });
 
