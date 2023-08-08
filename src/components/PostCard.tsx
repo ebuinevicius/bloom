@@ -10,6 +10,7 @@ interface PostCardProps {
     _count: {
       likes: number;
     };
+    likedByMe: boolean;
     user: {
       name: string | null;
       image: string | null;
@@ -30,7 +31,6 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
         <div>
           <h4 className="font-bold">{post.user.name}</h4>
           <p className="text-gray-600">{hoursAgo}h ago</p>
-          <p>{post._count.likes}</p>
         </div>
       </div>
       <p>{post.content}</p>

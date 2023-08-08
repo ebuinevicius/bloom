@@ -1,12 +1,14 @@
 import React from 'react';
 import { HandThumbUpIcon } from '@heroicons/react/20/solid';
 import { api } from '~/utils/api';
+import ButtonTooltip from '../ButtonTooltip';
 
 interface LikeButtonProps {
   post: {
     id: string;
     content: string;
     createdAt: Date;
+    likedByMe: boolean;
     _count: {
       likes: number;
     };
@@ -21,6 +23,9 @@ interface LikeButtonProps {
 function LikeButton({ post }: LikeButtonProps) {
   const trpcUtils = api.useContext();
 
+  const isLiked = post.likedByMe;
+  const tooltipText = isLiked ? 'Remove like from post' : 'Like this post';
+
   const likePost = api.post.likePost.useMutation();
   const handleLike = async () => {
     try {
@@ -31,9 +36,23 @@ function LikeButton({ post }: LikeButtonProps) {
     }
   };
   return (
-    <button className="w-40 h-40" onClick={handleLike}>
-      <HandThumbUpIcon />
-    </button>
+    <ButtonTooltip tooltip={isLiked ? 'Remove like 💔' : 'Like this post ❤️'}>
+      <button
+        onClick={handleLike}
+        className={`flex  gap-2 rounded-md ${
+          isLiked
+            ? 'bg-green-600 dark:bg-green-300 hover:bg-green-700 dark:hover:bg-green-400'
+            : 'bg-slate-300 dark:bg-slate-800'
+        } py-1 px-2`}
+      >
+        <HandThumbUpIcon
+          className={`h-6 w-6 ${isLiked ? 'text-white dark:text-black' : 'text-black dark:text-white'}`}
+        />
+        <p className={`${isLiked ? 'text-white dark:text-black' : 'text-black dark:text-white'} font-semibold`}>
+          {post._count.likes}
+        </p>
+      </button>
+    </ButtonTooltip>
   );
 }
 

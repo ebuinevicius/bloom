@@ -13,6 +13,8 @@ export const postRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const { limit = 10, cursor = 0 } = input;
       const currentUserId = ctx.session.user.id;
+
+      // Fetch the required posts
       const posts = await ctx.prisma.post.findMany({
         take: limit + 1,
         skip: cursor,
@@ -45,12 +47,34 @@ export const postRouter = createTRPCRouter({
         },
       });
 
-      const hasMorePosts = posts.length > limit;
+      // Check if each post is liked by the current user.
+      const postsWithLikesStatus = await Promise.all(
+        posts.map(async (post) => {
+          const userLike = await ctx.prisma.like.findUnique({
+            where: {
+              userId_postId: {
+                userId: currentUserId,
+                postId: post.id,
+              },
+            },
+          });
+
+          return {
+            ...post,
+            likedByMe: !!userLike,
+          };
+        }),
+      );
+
+      // Handle the pagination logic
+      const hasMorePosts = postsWithLikesStatus.length > limit;
       if (hasMorePosts) {
-        posts.pop();
+        postsWithLikesStatus.pop();
       }
+
+      // Return the processed data.
       return {
-        posts,
+        posts: postsWithLikesStatus,
         hasMorePosts,
         nextCursor: hasMorePosts ? cursor + limit : null,
       };

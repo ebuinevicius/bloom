@@ -11,6 +11,7 @@ type Post = {
   _count: {
     likes: number;
   };
+  likedByMe: boolean;
 };
 
 type InfinitePostListProps = {
@@ -33,7 +34,13 @@ function InfinitePostList({ posts, isError, isLoading, fetchNewPosts, hasMore = 
   }
   return (
     <ul>
-      <InfiniteScroll dataLength={posts.length} next={fetchNewPosts} hasMore={hasMore} loader={<LoadingSpinner />}>
+      <InfiniteScroll
+        style={{ overflow: 'visible' }}
+        dataLength={posts.length}
+        next={fetchNewPosts}
+        hasMore={hasMore}
+        loader={<LoadingSpinner />}
+      >
         {posts.map((post) => {
           return <PostCard key={post.id} post={post} />;
         })}
