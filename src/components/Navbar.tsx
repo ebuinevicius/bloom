@@ -1,7 +1,6 @@
 import React from 'react';
-import { signIn, signOut, useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import ThemeSelector from './ThemeSelector';
-import { redirect } from 'next/navigation';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
@@ -10,7 +9,7 @@ function Navbar() {
   const router = useRouter();
 
   return (
-    <nav className="bg-gray-100 border-gray-600 border-b-[1px] dark:bg-gray-900">
+    <nav className="bg-gray-100 border-gray-200 dark:border-gray-800 border-b-[1px] dark:bg-gray-900 w-2/2">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-around mx-auto p-2">
         <Link href="/" className="text-2xl font-bold">
           Bloom
