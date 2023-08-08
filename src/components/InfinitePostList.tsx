@@ -23,10 +23,10 @@ function InfinitePostList({ posts, isError, isLoading, fetchNewPosts, hasMore = 
     return <LoadingSpinner />;
   }
   if (isError) {
-    return <h1>Error...</h1>;
+    return <h1 className="self-center text-xl pt-5">Error...</h1>;
   }
   if (posts == null || posts.length == 0) {
-    return <h2>Nothing to display</h2>;
+    return <h1 className="self-center text-xl pt-5">Nothing to display</h1>;
   }
   return (
     <ul>

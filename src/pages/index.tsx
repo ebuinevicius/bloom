@@ -25,7 +25,7 @@ export default function Home() {
       <div className="self-start w-fit h-fit">
         <ProfileCard onAddNewPost={() => setIsPostModalOpen(true)} />
       </div>
-      <div className="grid-col-start-2 grid-col-end-3 flex gap-2 flex-col w-full px-2">
+      <div className="grid-col-start-2 grid-col-end-3 flex gap-2 flex-col w-full px-2 self-start">
         <InfinitePostList
           posts={posts.data?.pages.flatMap((page) => page.posts)}
           isError={posts.isError}

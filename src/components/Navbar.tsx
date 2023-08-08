@@ -17,7 +17,7 @@ function Navbar() {
         <div className="flex flex-row space-x-2 items-center">
           <ThemeSelector />
           <button
-            className="rounded bg-gray-200 dark:bg-gray-800 px-5 py-1 font-semibold text-black dark:text-white no-underline transition hover:bg-white/20 h-12 text-xl"
+            className="rounded bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 px-5 py-1 font-semibold text-black dark:text-white no-underline transition h-12 text-xl"
             onClick={sessionData ? () => signOut({ callbackUrl: '/' }) : () => router.push('/signin')}
           >
             {sessionData ? 'Sign out' : 'Sign in'}
