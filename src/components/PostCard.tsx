@@ -1,10 +1,15 @@
 import React from 'react';
+import { api } from '~/utils/api';
+import LikeButton from './buttons/LikeButton';
 
 interface PostCardProps {
   post: {
     id: string;
     content: string;
     createdAt: Date;
+    _count: {
+      likes: number;
+    };
     user: {
       name: string | null;
       image: string | null;
@@ -25,12 +30,11 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
         <div>
           <h4 className="font-bold">{post.user.name}</h4>
           <p className="text-gray-600">{hoursAgo}h ago</p>
+          <p>{post._count.likes}</p>
         </div>
       </div>
       <p>{post.content}</p>
-      <button onClick={() => null} className="bg-blue-500 text-white px-4 py-2 rounded">
-        Like
-      </button>
+      <LikeButton post={post} />
     </div>
   );
 };
