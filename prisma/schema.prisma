@@ -49,7 +49,12 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  Post          Post[]
+
+  // Non-Next Auth
+  posts     Post[]
+  likes     Like[]
+  followers User[] @relation(name: "Followers")
+  follows   User[] @relation(name: "Followers")
 }
 
 model VerificationToken {
@@ -68,4 +73,14 @@ model Post {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+model Like {
+  userId String
+  postId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, postId])
+  @@index([userId])
+  @@index([postId])
 }
