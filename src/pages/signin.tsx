@@ -6,7 +6,7 @@ import { authOptions } from '~/server/auth';
 
 export default function SignIn({ providers }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
-    <div className="flex flex-col py-4 justify-center items-center gap-4 w-2/5 ">
+    <div className="grid place-items-center gap-4 p-10">
       <h1 className="text-xl font-bold">Sign in to your account.</h1>
       <div className="flex flex-col px-6 py-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
         <div className="rounded-lg bg-slate-800 dark:bg-white h-fit">
