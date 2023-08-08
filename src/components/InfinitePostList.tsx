@@ -8,6 +8,9 @@ type Post = {
   content: string;
   createdAt: Date;
   user: { id: string; image: string | null; name: string | null };
+  _count: {
+    likes: number;
+  };
 };
 
 type InfinitePostListProps = {
