@@ -21,13 +21,13 @@ function ThemeSelector() {
 
   return (
     <button
-      className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-200 dark:bg-gray-800"
+      className="w-12 h-12 rounded-full flex items-center justify-center bg-gray-200 dark:bg-gray-800"
       onClick={toggleTheme}
     >
       {theme === 'light' ? (
-        <MoonIcon className="w-4 h-4 text-gray-600" />
+        <MoonIcon className="w-8 h-8 text-gray-600" />
       ) : (
-        <SunIcon className="w-4 h-4 text-white-400" />
+        <SunIcon className="w-8 h-8 text-white-400" />
       )}
     </button>
   );

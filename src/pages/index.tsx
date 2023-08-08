@@ -21,8 +21,8 @@ export default function Home() {
   if (status === 'loading') return <p>Loading</p>;
 
   return (
-    <div className="mt-5 grid grid-cols-3 place-items-center">
-      <div className="self-start">
+    <div className="mt-5 grid grid-cols-3 place-items-center min-h-screen">
+      <div className="self-start w-fit h-fit">
         <ProfileCard onAddNewPost={() => setIsPostModalOpen(true)} />
       </div>
       <div className="grid-col-start-2 grid-col-end-3 flex gap-2 flex-col w-full px-2">
