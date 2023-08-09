@@ -8,10 +8,68 @@ export const postRouter = createTRPCRouter({
     return post;
   }),
 
+  infiniteProfileFeed: protectedProcedure
+    .input(z.object({ limit: z.number().optional(), cursor: z.number().optional(), userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { limit = 5, cursor = 0, userId } = input;
+
+      // Fetch the required posts
+      const posts = await ctx.prisma.post.findMany({
+        take: limit + 1,
+        skip: cursor,
+        where: {
+          userId: userId,
+        },
+        include: {
+          user: true,
+          _count: {
+            select: {
+              likes: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc', // Order by the most recent posts
+        },
+      });
+
+      // Check if each post is liked by the current user.
+      const postsWithLikesStatus = await Promise.all(
+        posts.map(async (post) => {
+          const userLike = await ctx.prisma.like.findUnique({
+            where: {
+              userId_postId: {
+                userId: ctx.session.user.id,
+                postId: post.id,
+              },
+            },
+          });
+
+          return {
+            ...post,
+            likedByMe: !!userLike,
+          };
+        }),
+      );
+
+      // Handle the pagination logic
+      const hasMorePosts = postsWithLikesStatus.length > limit;
+      if (hasMorePosts) {
+        postsWithLikesStatus.pop();
+      }
+
+      // Return the processed data.
+      return {
+        posts: postsWithLikesStatus,
+        hasMorePosts,
+        nextCursor: hasMorePosts ? cursor + limit : null,
+      };
+    }),
+
   infiniteFeed: protectedProcedure
     .input(z.object({ limit: z.number().optional(), cursor: z.number().optional() }))
     .query(async ({ ctx, input }) => {
-      const { limit = 10, cursor = 0 } = input;
+      const { limit = 5, cursor = 0 } = input;
       const currentUserId = ctx.session.user.id;
 
       // Fetch the required posts
@@ -22,7 +80,7 @@ export const postRouter = createTRPCRouter({
           OR: [
             {
               user: {
-                follows: {
+                followers: {
                   some: {
                     id: currentUserId,
                   },
