@@ -4,54 +4,57 @@ import { useSession } from 'next-auth/react';
 import { Button } from './buttons/Button';
 import { api } from '~/utils/api';
 import { LoadingSpinner } from './LoadingSpinner';
+import FollowButton from './buttons/FollowButton';
+import Link from 'next/link';
 
 interface ProfileCardProps {
-  onAddNewPost: () => void;
+  onAddNewPost?: () => void;
+  userId: string;
 }
 
-function ProfileCard({ onAddNewPost }: ProfileCardProps) {
+function ProfileCard({ onAddNewPost, userId }: ProfileCardProps) {
   const { data: session } = useSession();
 
-  if (!session?.user?.id) {
+  const { data: userProfile, isLoading } = api.user.getUserProfile.useQuery(userId);
+
+  if (!session?.user?.id || isLoading || !userProfile) {
     return <LoadingSpinner />;
   }
-
-  const userProfile = api.user.getUserProfile.useQuery(session.user.id);
-
   return (
     <div className="bg-white dark:bg-gray-800 shadow-xl rounded-lg py-3 flex flex-col items-center px-3 justify-center h-full w-full">
-      <ProfileImage src={session?.user.image} className="h-20 w-20" />
+      <ProfileImage src={userProfile.image} className="h-20 w-20" />
       <div className="p-2 flex items-center flex-col gap-5">
-        <h3 className="text-center text-2xl font-bold text-gray-900 dark:text-white leading-8">{session?.user.name}</h3>
-        <h2 className="text-center text-lg font-bold text-gray-500 leading-8">{session?.user.email}</h2>
+        <h3 className="text-center text-2xl font-bold text-gray-900 dark:text-white leading-8">{userProfile.name}</h3>
+        {session?.user.id === userProfile.id ? (
+          <h2 className="text-center text-lg font-bold text-gray-500 leading-8">{session?.user.email}</h2>
+        ) : (
+          <></>
+        )}
         <div className="flex gap-6 justify-around text-xl">
           <div className="flex flex-col items-center">
-            {userProfile.isLoading ? (
-              <LoadingSpinner />
-            ) : (
-              <>
-                <p className="text-black dark:text-white">{userProfile.data?._count.posts}</p>
-                <p className="text-gray-500">Posts</p>
-              </>
-            )}
+            <p className="text-black dark:text-white">{userProfile?._count.posts}</p>
+            <p className="text-gray-500">Posts</p>
           </div>
           <div className="flex flex-col items-center">
-            {userProfile.isLoading ? (
-              <LoadingSpinner />
-            ) : (
-              <>
-                <p className="text-black dark:text-white">{userProfile.data?._count.followers}</p>
-                <p className="text-gray-500">Followers</p>
-              </>
-            )}
+            <p className="text-black dark:text-white">{userProfile?._count.followers}</p>
+            <p className="text-gray-500">Followers</p>
           </div>
         </div>
-        <Button gray={true} small={true} className="w-36 text-xl font-bold">
-          Profile
-        </Button>
-        <Button onClick={onAddNewPost} small={true} className="w-36 text-xl font-bold">
-          New Post
-        </Button>
+        {session?.user.id === userProfile.id ? (
+          <>
+            <Link href={`/profiles/${session?.user.id}`}>
+              <Button gray={true} small={true} className="w-36 text-xl font-bold">
+                Profile
+              </Button>
+            </Link>
+
+            <Button onClick={onAddNewPost} small={true} className="w-36 text-xl font-bold">
+              New Post
+            </Button>
+          </>
+        ) : (
+          <FollowButton followerId={session?.user.id} followeeId={userProfile.id} />
+        )}
       </div>
     </div>
   );
