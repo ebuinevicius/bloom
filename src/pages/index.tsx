@@ -9,7 +9,6 @@ import { LoadingSpinner } from '~/components/LoadingSpinner';
 import InfinitePostList from '~/components/InfinitePostList';
 
 export default function Home() {
-  // const hello = api.example.hello.useQuery({ text: 'from tRPC' });
   const { data: session, status } = useSession();
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const posts = api.post.infiniteFeed.useInfiniteQuery({}, { getNextPageParam: (lastPage) => lastPage.nextCursor });
@@ -18,14 +17,14 @@ export default function Home() {
     setIsPostModalOpen(false);
   };
 
-  if (status === 'loading') {
+  if (status === 'loading' || !session?.user) {
     return <LoadingSpinner />;
   }
 
   return (
     <div className="mt-5 grid grid-cols-3 place-items-center min-h-screen">
       <div className="self-start w-fit h-fit">
-        <ProfileCard onAddNewPost={() => setIsPostModalOpen(true)} />
+        <ProfileCard userId={session?.user.id} onAddNewPost={() => setIsPostModalOpen(true)} />
       </div>
       <div className="grid-col-start-2 grid-col-end-3 flex gap-2 flex-col w-full px-2 self-start">
         <InfinitePostList
