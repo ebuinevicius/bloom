@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { HandThumbUpIcon } from '@heroicons/react/20/solid';
 import { api } from '~/utils/api';
 import ButtonTooltip from '../ButtonTooltip';
+import { LoadingSpinner } from '../LoadingSpinner';
 
 interface LikeButtonProps {
   post: {
@@ -24,17 +25,18 @@ function LikeButton({ post }: LikeButtonProps) {
   const trpcUtils = api.useContext();
 
   const isLiked = post.likedByMe;
-  const tooltipText = isLiked ? 'Remove like from post' : 'Like this post';
 
   const likePost = api.post.likePost.useMutation();
   const handleLike = async () => {
     try {
       await likePost.mutateAsync({ postId: post.id });
       await trpcUtils.post.infiniteFeed.invalidate();
+      await trpcUtils.post.infiniteProfileFeed.invalidate();
     } catch (error) {
       console.log('Error');
     }
   };
+
   return (
     <ButtonTooltip tooltip={isLiked ? 'Remove like 💔' : 'Like this post ❤️'}>
       <button
