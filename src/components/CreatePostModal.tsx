@@ -69,7 +69,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose }) =>
 
       trpcUtils.user.getUserProfile.setData({ userId: session.user.id }, updateProfile);
       trpcUtils.post.infiniteFeed.setInfiniteData({}, updateData);
-      trpcUtils.post.infiniteFeed.setInfiniteData({ userId: newPost.userId }, updateData);
+      trpcUtils.post.infiniteProfileFeed.setInfiniteData({ userId: newPost.userId }, updateData);
     },
   });
 

@@ -112,7 +112,7 @@ function PostCard({ id, content, createdAt, likeCount, likedByMe, user }: Post) 
       // Update feeds to have the new post and
       trpcUtils.post.infiniteFeed.setInfiniteData({}, updateFeed);
       trpcUtils.post.infiniteProfileFeed.setInfiniteData({ userId: user.id }, updateFeed);
-      trpcUtils.user.getUserProfile.setData({}, updateProfile);
+      trpcUtils.user.getUserProfile.setData({ userId: user.id }, updateProfile);
     },
   });
 
