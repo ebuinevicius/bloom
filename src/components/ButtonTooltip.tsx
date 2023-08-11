@@ -5,7 +5,7 @@ interface Props {
   tooltip?: string;
 }
 
-const ButtonToolTip: FC<Props> = ({ children, tooltip }): JSX.Element => {
+const ButtonTooltip: FC<Props> = ({ children, tooltip }): JSX.Element => {
   const tooltipRef = useRef<HTMLSpanElement>(null);
   const container = useRef<HTMLDivElement>(null);
 
@@ -33,4 +33,4 @@ const ButtonToolTip: FC<Props> = ({ children, tooltip }): JSX.Element => {
   );
 };
 
-export default ButtonToolTip;
+export default ButtonTooltip;
