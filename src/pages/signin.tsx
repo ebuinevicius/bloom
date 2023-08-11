@@ -14,7 +14,7 @@ export default function SignIn({ providers }: InferGetServerSidePropsType<typeof
           {Object.values(providers).map((provider) => (
             <div key={provider.name} className="">
               <button
-                className="flex items-center gap-3 text-2xl font-light hover:bg-cool-gray-100 rounded py-2 px-3 text-gray-200 dark:text-gray-600"
+                className="flex items-center gap-5 text-2xl hover:bg-cool-gray-100 rounded py-2 px-2 text-gray-200 dark:text-gray-600 font-roboto"
                 type="button"
                 onClick={() => signIn(provider.id)}
               >
@@ -29,14 +29,7 @@ export default function SignIn({ providers }: InferGetServerSidePropsType<typeof
   );
 }
 
-const GoogleIcon = () => (
-  <Image
-    src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
-    alt="Google Logo"
-    width="40"
-    height="40"
-  />
-);
+const GoogleIcon = () => <Image src="/images/google_g_logo.png" alt="Google Logo" width="40" height="40" />;
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getServerSession(context.req, context.res, authOptions);
