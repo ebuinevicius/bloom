@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { api } from '~/utils/api';
 import { HandThumbUpIcon } from '@heroicons/react/20/solid';
 import ButtonTooltip from './ButtonTooltip';
+import FollowButton from './buttons/FollowButton';
+import { contextProps } from '@trpc/react-query/shared';
+import { useSession } from 'next-auth/react';
 
 type Post = {
   id: string;
@@ -58,6 +61,8 @@ export default function InfinitePostList({
 }
 
 function PostCard({ id, content, createdAt, likeCount, likedByMe, user }: Post) {
+  const session = useSession();
+
   // Convert the post's createdAt to a "time ago" format
   const timeAgo = new Date().getTime() - new Date(createdAt).getTime(); // This gives difference in milliseconds
   const hoursAgo = Math.floor(timeAgo / (1000 * 60 * 60));
@@ -117,12 +122,18 @@ function PostCard({ id, content, createdAt, likeCount, likedByMe, user }: Post) 
 
   return (
     <div className=" dark:bg-gray-800 p-4 mb-3 w-full rounded shadow-lg border border-gray-200 dark:border-gray-700 space-y-2">
-      <Link className="flex gap-2 items-center" href={`/profiles/${user.id}`}>
-        <img src={user.image || ''} alt={user.name || ''} className="w-10 h-10 rounded-full" />
-        <div>
-          <h4 className="font-bold">{user.name}</h4>
+      <div className="flex gap-5">
+        <Link className="flex gap-2 items-center" href={`/profiles/${user.id}`}>
+          <img src={user.image || ''} alt={user.name || ''} className="w-10 h-10 rounded-full" />
+          <div>
+            <h4 className="font-bold">{user.name}</h4>
+          </div>
+        </Link>
+        <div className="w-20">
+          <FollowButton followerId={session.data?.user.id || ''} followeeId={user.id} />
         </div>
-      </Link>
+      </div>
+
       <p className="text-gray-600">{hoursAgo}h ago</p>
       <p className="text-lg font-normal">{content}</p>
       <LikeButton isLiked={likedByMe} isLoading={likePost.isLoading} likeCount={likeCount} onClick={handleLike} />
