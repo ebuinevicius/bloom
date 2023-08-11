@@ -15,7 +15,7 @@ interface ProfileCardProps {
 function ProfileCard({ onAddNewPost, userId }: ProfileCardProps) {
   const { data: session } = useSession();
 
-  const { data: userProfile, isLoading } = api.user.getUserProfile.useQuery(userId);
+  const { data: userProfile, isLoading } = api.user.getUserProfile.useQuery({ userId });
 
   if (!session?.user?.id || isLoading || !userProfile) {
     return <LoadingSpinner />;
@@ -32,11 +32,11 @@ function ProfileCard({ onAddNewPost, userId }: ProfileCardProps) {
         )}
         <div className="flex gap-6 justify-around text-xl">
           <div className="flex flex-col items-center">
-            <p className="text-black dark:text-white">{userProfile?._count.posts}</p>
+            <p className="text-black dark:text-white">{userProfile?.postCount}</p>
             <p className="text-gray-500">Posts</p>
           </div>
           <div className="flex flex-col items-center">
-            <p className="text-black dark:text-white">{userProfile?._count.followers}</p>
+            <p className="text-black dark:text-white">{userProfile?.followerCount}</p>
             <p className="text-gray-500">Followers</p>
           </div>
         </div>
