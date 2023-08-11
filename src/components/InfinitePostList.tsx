@@ -98,21 +98,9 @@ function PostCard({ id, content, createdAt, likeCount, likedByMe, user }: Post) 
         };
       };
 
-      const updateProfile: Parameters<typeof trpcUtils.user.getUserProfile.setData>[1] = (oldData) => {
-        if (oldData == null) {
-          return;
-        }
-
-        return {
-          ...oldData,
-          postCount: oldData.postCount + 1,
-        };
-      };
-
       // Update feeds to have the new post and
       trpcUtils.post.infiniteFeed.setInfiniteData({}, updateFeed);
       trpcUtils.post.infiniteProfileFeed.setInfiniteData({ userId: user.id }, updateFeed);
-      trpcUtils.user.getUserProfile.setData({ userId: user.id }, updateProfile);
     },
   });
 
@@ -121,7 +109,7 @@ function PostCard({ id, content, createdAt, likeCount, likedByMe, user }: Post) 
   };
 
   return (
-    <div className=" dark:bg-gray-800 p-4 mb-3 w-full rounded shadow-lg border border-gray-200 dark:border-gray-700 space-y-2">
+    <div className=" dark:bg-gray-800 p-4 mb-3 w-full h-48 rounded shadow-lg border border-gray-200 dark:border-gray-700 space-y-2">
       <div className="flex gap-5">
         <Link className="flex gap-2 items-center" href={`/profiles/${user.id}`}>
           <img src={user.image || ''} alt={user.name || ''} className="w-10 h-10 rounded-full" />
@@ -151,8 +139,9 @@ type LikeButtonProps = {
 };
 
 function LikeButton({ isLiked, isLoading, likeCount, onClick }: LikeButtonProps) {
-  const trpcUtils = api.useContext();
-
+  if (isLoading) {
+    return <LoadingSpinner small={true} />;
+  }
   return (
     <ButtonTooltip tooltip={isLiked ? 'Remove like 💔' : 'Like this post ❤️'}>
       <button
