@@ -4,9 +4,9 @@ import { z } from 'zod';
 import { createTRPCRouter, publicProcedure, protectedProcedure } from '~/server/api/trpc';
 
 export const userRouter = createTRPCRouter({
-  getUserProfile: protectedProcedure.input(z.string()).query(async ({ ctx, input }) => {
-    const userId = input;
-    const userWithPostCount = await ctx.prisma.user.findUnique({
+  getUserProfile: protectedProcedure.input(z.object({ userId: z.string() })).query(async ({ ctx, input }) => {
+    const { userId } = input;
+    const userInfo = await ctx.prisma.user.findUnique({
       where: { id: userId },
       select: {
         id: true,
@@ -28,13 +28,15 @@ export const userRouter = createTRPCRouter({
       },
     });
 
-    if (userWithPostCount == null) {
+    if (userInfo == null) {
       return;
     }
 
     return {
-      ...userWithPostCount,
-      isFollowing: userWithPostCount.followers.length > 0,
+      ...userInfo,
+      isFollowing: userInfo.followers.length > 0,
+      postCount: userInfo._count.posts,
+      followerCount: userInfo._count.followers,
     };
   }),
 
