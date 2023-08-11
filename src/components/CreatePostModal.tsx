@@ -1,7 +1,9 @@
 // CreatePostModal.tsx
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import { Button } from './buttons/Button';
 import { api } from '~/utils/api';
+import { useSession } from 'next-auth/react';
+import { LoadingSpinner } from './LoadingSpinner';
 
 interface CreatePostModalProps {
   isOpen: boolean;
@@ -12,17 +14,67 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose }) =>
   const [content, setContent] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const trpcUtils = api.useContext();
+  const { data: session, status } = useSession();
+
+  if (status === 'loading' || !session?.user) {
+    return <LoadingSpinner />;
+  }
 
   const createPost = api.post.create.useMutation({
-    onSuccess: async (newPost) => {
-      console.log(newPost);
-      await trpcUtils.post.infiniteFeed.invalidate();
-      await trpcUtils.post.infiniteProfileFeed.invalidate();
-      await trpcUtils.user.getUserProfile.invalidate();
+    onSuccess: (newPost) => {
+      setContent('');
+
+      if (status !== 'authenticated') {
+        return;
+      }
+
+      const updateData: Parameters<typeof trpcUtils.post.infiniteFeed.setInfiniteData>[1] = (oldData) => {
+        if (oldData == null || oldData.pages[0] == null) {
+          return;
+        }
+
+        const newCachePost = {
+          ...newPost,
+          likedByMe: false,
+          likeCount: 0,
+          user: {
+            id: session.user.id,
+            image: session.user.image || null,
+            name: session.user.name || null,
+          },
+        };
+
+        return {
+          ...oldData,
+          pages: [
+            {
+              ...oldData.pages[0],
+              posts: [newCachePost, ...oldData.pages[0].posts],
+            },
+            ...oldData.pages.slice(1),
+          ],
+        };
+      };
+
+      const updateProfile: Parameters<typeof trpcUtils.user.getUserProfile.setData>[1] = (oldData) => {
+        if (oldData == null) {
+          return;
+        }
+
+        return {
+          ...oldData,
+          postCount: oldData.postCount + 1,
+        };
+      };
+
+      trpcUtils.user.getUserProfile.setData({ userId: session.user.id }, updateProfile);
+      trpcUtils.post.infiniteFeed.setInfiniteData({}, updateData);
+      trpcUtils.post.infiniteFeed.setInfiniteData({ userId: newPost.userId }, updateData);
     },
   });
 
-  const handleSubmit = () => {
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
     setError(null);
 
     if (content.length < 1) {
