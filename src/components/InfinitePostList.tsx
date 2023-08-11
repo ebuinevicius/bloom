@@ -129,9 +129,11 @@ function PostCard({ id, content, createdAt, likeCount, likedByMe, user }: Post) 
             <h4 className="font-bold">{user.name}</h4>
           </div>
         </Link>
-        <div className="w-20">
-          <FollowButton followerId={session.data?.user.id || ''} followeeId={user.id} />
-        </div>
+        {user.id != session?.data?.user.id && (
+          <div className="w-20">
+            <FollowButton followerId={session.data?.user.id || ''} followeeId={user.id} />
+          </div>
+        )}
       </div>
 
       <p className="text-gray-600">{hoursAgo}h ago</p>
