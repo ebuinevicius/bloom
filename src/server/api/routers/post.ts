@@ -1,3 +1,5 @@
+import { Prisma } from '@prisma/client';
+import { procedureTypes } from '@trpc/server';
 import { z } from 'zod';
 
 import { createTRPCRouter, publicProcedure, protectedProcedure } from '~/server/api/trpc';
@@ -8,74 +10,38 @@ export const postRouter = createTRPCRouter({
     return post;
   }),
 
-  infiniteProfileFeed: protectedProcedure
-    .input(z.object({ limit: z.number().optional(), cursor: z.number().optional(), userId: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const { limit = 5, cursor = 0, userId } = input;
+  infiniteFeed: protectedProcedure
+    .input(
+      z.object({
+        limit: z.number().optional(),
+        cursor: z.object({ id: z.string(), createdAt: z.date() }).optional(),
+      }),
+    )
+    .query(async ({ ctx, input: { limit = 5, cursor } }) => {
+      const currentUserId = ctx.session.user.id;
 
-      // Fetch the required posts
       const posts = await ctx.prisma.post.findMany({
         take: limit + 1,
-        skip: cursor,
-        where: {
-          userId: userId,
-        },
-        include: {
-          user: true,
+        cursor: cursor ? { createdAt_id: cursor } : undefined,
+        select: {
+          id: true,
+          user: {
+            select: {
+              id: true,
+              image: true,
+              name: true,
+            },
+          },
+          content: true,
+          createdAt: true,
+          likes: !currentUserId ? false : { where: { userId: currentUserId } },
           _count: {
             select: {
               likes: true,
             },
           },
         },
-        orderBy: {
-          createdAt: 'desc', // Order by the most recent posts
-        },
-      });
-
-      // Check if each post is liked by the current user.
-      const postsWithLikesStatus = await Promise.all(
-        posts.map(async (post) => {
-          const userLike = await ctx.prisma.like.findUnique({
-            where: {
-              userId_postId: {
-                userId: ctx.session.user.id,
-                postId: post.id,
-              },
-            },
-          });
-
-          return {
-            ...post,
-            likedByMe: !!userLike,
-          };
-        }),
-      );
-
-      // Handle the pagination logic
-      const hasMorePosts = postsWithLikesStatus.length > limit;
-      if (hasMorePosts) {
-        postsWithLikesStatus.pop();
-      }
-
-      // Return the processed data.
-      return {
-        posts: postsWithLikesStatus,
-        hasMorePosts,
-        nextCursor: hasMorePosts ? cursor + limit : null,
-      };
-    }),
-
-  infiniteFeed: protectedProcedure
-    .input(z.object({ limit: z.number().optional(), cursor: z.number().optional() }))
-    .query(async ({ ctx, input }) => {
-      const { limit = 5, cursor = 0 } = input;
-      const currentUserId = ctx.session.user.id;
-
-      // Fetch the required posts
-      const posts = await ctx.prisma.post.findMany({
-        take: limit + 1,
-        skip: cursor,
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
         where: {
           OR: [
             {
@@ -92,62 +58,107 @@ export const postRouter = createTRPCRouter({
             },
           ],
         },
-        include: {
-          user: true,
+      });
+
+      // Handle the pagination logic
+      const hasMorePosts = posts.length > limit;
+      let nextCursor: typeof cursor | undefined;
+      if (hasMorePosts) {
+        const nextPost = posts.pop();
+        if (nextPost != null) {
+          nextCursor = { id: nextPost.id, createdAt: nextPost.createdAt };
+        }
+      }
+
+      // Return the processed data.
+      return {
+        posts: posts.map((post) => {
+          return {
+            id: post.id,
+            user: post.user,
+            content: post.content,
+            createdAt: post.createdAt,
+            likedByMe: post.likes.length > 0,
+            likeCount: post._count.likes,
+          };
+        }),
+        nextCursor,
+      };
+    }),
+
+  infiniteProfileFeed: protectedProcedure
+    .input(
+      z.object({
+        limit: z.number().optional(),
+        cursor: z.object({ id: z.string(), createdAt: z.date() }).optional(),
+        userId: z.string().optional(),
+      }),
+    )
+    .query(async ({ input: { limit = 5, cursor, userId }, ctx }) => {
+      const currentUserId = ctx.session.user.id;
+
+      const posts = await ctx.prisma.post.findMany({
+        take: limit + 1,
+        cursor: cursor ? { createdAt_id: cursor } : undefined,
+        select: {
+          id: true,
+          user: {
+            select: {
+              id: true,
+              image: true,
+              name: true,
+            },
+          },
+          content: true,
+          createdAt: true,
+          likes: !currentUserId ? false : { where: { userId: currentUserId } },
           _count: {
             select: {
               likes: true,
             },
           },
         },
-        orderBy: {
-          createdAt: 'desc', // Order by the most recent posts
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+        where: {
+          user: {
+            id: userId,
+          },
         },
       });
 
-      // Check if each post is liked by the current user.
-      const postsWithLikesStatus = await Promise.all(
-        posts.map(async (post) => {
-          const userLike = await ctx.prisma.like.findUnique({
-            where: {
-              userId_postId: {
-                userId: currentUserId,
-                postId: post.id,
-              },
-            },
-          });
-
-          return {
-            ...post,
-            likedByMe: !!userLike,
-          };
-        }),
-      );
-
       // Handle the pagination logic
-      const hasMorePosts = postsWithLikesStatus.length > limit;
+      const hasMorePosts = posts.length > limit;
+      let nextCursor: typeof cursor | undefined;
       if (hasMorePosts) {
-        postsWithLikesStatus.pop();
+        const nextPost = posts.pop();
+        if (nextPost != null) {
+          nextCursor = { id: nextPost.id, createdAt: nextPost.createdAt };
+        }
       }
 
       // Return the processed data.
       return {
-        posts: postsWithLikesStatus,
-        hasMorePosts,
-        nextCursor: hasMorePosts ? cursor + limit : null,
+        posts: posts.map((post) => {
+          return {
+            id: post.id,
+            user: post.user,
+            content: post.content,
+            createdAt: post.createdAt,
+            likedByMe: post.likes.length > 0,
+            likeCount: post._count.likes,
+          };
+        }),
+        nextCursor,
       };
     }),
 
   likePost: protectedProcedure.input(z.object({ postId: z.string() })).mutation(async ({ input: { postId }, ctx }) => {
-    const userId = ctx.session.user.id;
+    const data = { userId: ctx.session.user.id, postId: postId };
 
     // Check if the user has already liked this post
     const existingLike = await ctx.prisma.like.findUnique({
       where: {
-        userId_postId: {
-          userId: userId,
-          postId: postId,
-        },
+        userId_postId: data,
       },
     });
 
@@ -155,20 +166,14 @@ export const postRouter = createTRPCRouter({
       // User has already liked, so we'll remove the like
       await ctx.prisma.like.delete({
         where: {
-          userId_postId: {
-            userId: userId,
-            postId: existingLike.postId,
-          },
+          userId_postId: data,
         },
       });
+      return { addedLike: false };
     } else {
       // User hasn't liked, so we'll create a new like
-      await ctx.prisma.like.create({
-        data: {
-          userId: userId,
-          postId: postId,
-        },
-      });
+      await ctx.prisma.like.create({ data });
+      return { addedLike: true };
     }
   }),
 });
