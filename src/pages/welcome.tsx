@@ -3,7 +3,7 @@ import React from 'react';
 
 function Welcome() {
   return (
-    <div className="grid place-items-center gap-4 p-10">
+    <div className="grid place-items-center gap-4 p-10 text-center">
       <h1 className="text-5xl font-bold">Welcome to Bloom</h1>
       <h2 className="text-2xl">Where ideas bloom.</h2>
       <Link
