@@ -29,7 +29,9 @@ export default function Home() {
         <RecentPosts />
         {isPostModalOpen && <CreatePostModal isOpen={isPostModalOpen} onClose={closeModal} />}
       </div>
-      <SuggestedUsersCard />
+      <div className="hidden xl:contents self-start">
+        <SuggestedUsersCard />
+      </div>
     </div>
   );
 }
