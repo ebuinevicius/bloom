@@ -6,6 +6,7 @@ import { api } from '~/utils/api';
 import { LoadingSpinner } from '~/components/LoadingSpinner';
 import InfinitePostList from '~/components/InfinitePostList';
 import { GetServerSidePropsContext } from 'next';
+import SuggestedUsersCard from '~/components/SuggestedUsersCard';
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -20,14 +21,15 @@ export default function Home() {
   }
 
   return (
-    <div className="mt-5 grid grid-cols-3 place-items-center min-h-screen">
-      <div className="self-start w-fit h-fit">
+    <div className="mt-5 xl:grid xl:grid-cols-3 xl:place-items-center min-h-screen">
+      <div className="hidden xl:block self-start w-fit h-fit">
         <ProfileCard userId={session?.user.id} onAddNewPost={() => setIsPostModalOpen(true)} />
       </div>
       <div className="grid-col-start-2 grid-col-end-3 flex gap-2 flex-col w-full px-2 self-start">
         <RecentPosts />
         {isPostModalOpen && <CreatePostModal isOpen={isPostModalOpen} onClose={closeModal} />}
       </div>
+      <SuggestedUsersCard />
     </div>
   );
 }
