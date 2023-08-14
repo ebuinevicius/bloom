@@ -25,6 +25,16 @@ export default function SignIn({ providers }: InferGetServerSidePropsType<typeof
           ))}
         </div>
       </div>
+      <h2 className="lg:w-4/6 2xl:w-1/2">
+        <span className="font-bold">Beta Notice: </span>
+        Bloom is currently in its beta phase and is undergoing continuous testing and improvement.
+      </h2>
+      <h2 className="lg:w-4/6 2xl:w-1/2">
+        <span className="font-bold">Privacy Notice: </span>
+        By signing in, you acknowledge that certain information, including your name, profile photo, and any posts you
+        make, will be publicly visible to other users of Bloom. We value your privacy and are committed to ensuring your
+        data is protected and used responsibly.{' '}
+      </h2>
     </div>
   );
 }
