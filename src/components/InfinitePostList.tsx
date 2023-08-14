@@ -8,6 +8,7 @@ import ButtonTooltip from './ButtonTooltip';
 import FollowButton from './buttons/FollowButton';
 import { contextProps } from '@trpc/react-query/shared';
 import { useSession } from 'next-auth/react';
+import ProfileImage from './ProfileImage';
 
 type Post = {
   id: string;
@@ -109,23 +110,21 @@ function PostCard({ id, content, createdAt, likeCount, likedByMe, user }: Post) 
   };
 
   return (
-    <div className=" dark:bg-gray-800 p-4 mb-3 w-full h-48 rounded shadow-lg border border-gray-200 dark:border-gray-700 space-y-2">
+    <div className="flex flex-col justify-between dark:bg-dark-800 p-4 mb-3 w-full h-56 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 space-y-1">
       <div className="flex gap-5">
         <Link className="flex gap-2 items-center" href={`/profiles/${user.id}`}>
-          <img src={user.image || ''} alt={user.name || ''} className="w-10 h-10 rounded-full" />
+          <ProfileImage src={user.image} className="w-10 h-10 rounded-full" />
           <div>
             <h4 className="font-bold">{user.name}</h4>
           </div>
         </Link>
         {user.id != session?.data?.user.id && (
-          <div className="w-20">
-            <FollowButton followerId={session.data?.user.id || ''} followeeId={user.id} />
-          </div>
+          <FollowButton followerId={session.data?.user.id || ''} followeeId={user.id} />
         )}
       </div>
 
-      <p className="text-gray-600">{hoursAgo}h ago</p>
-      <p className="text-lg font-normal">{content}</p>
+      <p className="text-dark-500">{hoursAgo}h ago</p>
+      <p className="xl:text-md 2xl:text-lg font-normal">{content}</p>
       <LikeButton isLiked={likedByMe} isLoading={likePost.isLoading} likeCount={likeCount} onClick={handleLike} />
     </div>
   );
@@ -149,7 +148,7 @@ function LikeButton({ isLiked, isLoading, likeCount, onClick }: LikeButtonProps)
         className={`flex  gap-2 rounded-md ${
           isLiked
             ? 'bg-green-600 dark:bg-green-300 hover:bg-green-700 dark:hover:bg-green-400'
-            : 'bg-slate-300 hover:bg-slate-400 dark:bg-slate-700 dark:hover:bg-slate-600'
+            : 'bg-slate-300 hover:bg-slate-400 dark:bg-dark-700 dark:hover:bg-dark-600'
         } py-1 px-2`}
       >
         <HandThumbUpIcon
