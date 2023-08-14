@@ -1,7 +1,7 @@
-import { useSession } from 'next-auth/react';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { api } from '~/utils/api';
 import { LoadingSpinner } from '../LoadingSpinner';
+import { PlusCircleIcon, XCircleIcon } from '@heroicons/react/20/solid';
 
 interface FollowButtonProps {
   followerId: string; // Logged-in user's ID
@@ -22,13 +22,13 @@ const FollowButton: React.FC<FollowButtonProps> = ({ followerId, followeeId }: F
         if (oldData == null) {
           return;
         }
-        let followerCountModifier = oldData.isFollowing;
+        let followerCountModifier = oldData.isFollowing ? -1 : 1;
         if (oldData.isFollowing) {
         }
 
         return {
           ...oldData,
-          followerCount: oldData.followerCount + 1,
+          followerCount: oldData.followerCount + followerCountModifier,
         };
       };
 
@@ -41,7 +41,7 @@ const FollowButton: React.FC<FollowButtonProps> = ({ followerId, followeeId }: F
         return !wasFollowing;
       };
 
-      trpcUtils.user.getUserProfile.setData({ userId: followerId }, updateFollowee);
+      trpcUtils.user.getUserProfile.setData({ userId: followeeId }, updateFollowee);
       trpcUtils.user.isFollowing.setData({ followerId: followerId, followeeId: followeeId }, updateFollower);
     },
   });
@@ -58,12 +58,14 @@ const FollowButton: React.FC<FollowButtonProps> = ({ followerId, followeeId }: F
   return (
     <button
       disabled={toggleFollow.isLoading}
-      className={`rounded py-2 px-3 w-full font-semibold autofit flex items-center justify-center overflow-hidden ${
-        isFollowing ? 'bg-red-500' : 'bg-violet-400 text-black dark:bg-violet-600 dark:text-white'
+      className={`rounded py-2 px-3 w-fit 2xl:w-28 font-semibold flex items-center justify-center overflow-hidden text-white ${
+        isFollowing ? 'bg-red-500' : '  bg-blue-500'
       }`}
       onClick={handleFollowToggle}
     >
-      {isFollowing ? 'Unfollow' : 'Follow'}
+      <span className="hidden 2xl:contents">{isFollowing ? 'Unfollow' : 'Follow'}</span>
+      <PlusCircleIcon className={`h-6 w-6 2xl:hidden ${isFollowing ? 'hidden' : ''}`} />
+      <XCircleIcon className={`h-6 w-6 2xl:hidden ${isFollowing ? '' : 'hidden'}`} />
     </button>
   );
 };
