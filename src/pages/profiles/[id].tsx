@@ -36,7 +36,9 @@ const ProfilePage: NextPage<ProfilePageProps> = ({ id }) => {
           fetchNewPosts={posts.fetchNextPage}
         />
       </div>
-      <SuggestedUsersCard />
+      <div className="hidden xl:contents self-start">
+        <SuggestedUsersCard />
+      </div>
       {isPostModalOpen && <CreatePostModal isOpen={isPostModalOpen} onClose={closeModal} />}
     </div>
   );
