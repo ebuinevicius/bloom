@@ -21,7 +21,7 @@ function ProfileCard({ onAddNewPost, userId }: ProfileCardProps) {
     return <LoadingSpinner />;
   }
   return (
-    <div className="bg-white dark:bg-dark-800 shadow-xl rounded-lg py-3 flex flex-col items-center px-3 justify-center h-full w-full">
+    <div className="bg-white dark:bg-dark-800 shadow-xl rounded-lg py-3 hidden xl:flex xl:flex-col items-center px-3 justify-center h-full w-full">
       <ProfileImage src={userProfile.image} className="h-20 w-20" />
       <div className="p-2 flex items-center flex-col gap-5">
         <h3 className="text-center text-2xl font-bold text-gray-900 dark:text-white leading-8">{userProfile.name}</h3>
