@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import CreatePostModal from '~/components/CreatePostModal';
 import InfinitePostList from '~/components/InfinitePostList';
 import ProfileCard from '~/components/ProfileCard';
+import SuggestedUsersCard from '~/components/SuggestedUsersCard';
 import { api } from '~/utils/api';
 
 type ProfilePageProps = {
@@ -22,8 +23,8 @@ const ProfilePage: NextPage<ProfilePageProps> = ({ id }) => {
   );
 
   return (
-    <div className="mt-5 grid grid-cols-3 place-items-center min-h-screen">
-      <div className="text-gray-50 self-start">
+    <div className="mt-5 xl:grid xl:grid-cols-3 xl:place-items-center min-h-screen">
+      <div className="hidden xl:block self-start w-fit h-fit">
         <ProfileCard userId={id} onAddNewPost={() => setIsPostModalOpen(true)} />
       </div>
       <div className="grid-col-start-2 grid-col-end-3 flex gap-2 flex-col w-full px-2 self-start">
@@ -35,6 +36,7 @@ const ProfilePage: NextPage<ProfilePageProps> = ({ id }) => {
           fetchNewPosts={posts.fetchNextPage}
         />
       </div>
+      <SuggestedUsersCard />
       {isPostModalOpen && <CreatePostModal isOpen={isPostModalOpen} onClose={closeModal} />}
     </div>
   );
