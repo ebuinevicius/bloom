@@ -27,7 +27,8 @@ export default function SignIn({ providers }: InferGetServerSidePropsType<typeof
       </div>
       <h2 className="lg:w-4/6 2xl:w-1/2">
         <span className="font-bold">Beta Notice: </span>
-        Bloom is currently in its beta phase and is undergoing continuous testing and improvement.
+        Bloom is currently in its beta phase and is undergoing continuous testing and improvement. Some features,
+        including account/data deletion, have not yet been implemented.
       </h2>
       <h2 className="lg:w-4/6 2xl:w-1/2">
         <span className="font-bold">Privacy Notice: </span>
