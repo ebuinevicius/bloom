@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { createTRPCRouter, publicProcedure, protectedProcedure } from '~/server/api/trpc';
 
 export const userRouter = createTRPCRouter({
+  // Retrieves the profile information for a certain user by id for display on profile cards and profile pages
   getUserProfile: protectedProcedure.input(z.object({ userId: z.string() })).query(async ({ ctx, input }) => {
     const { userId } = input;
     const userInfo = await ctx.prisma.user.findUnique({
@@ -40,6 +41,7 @@ export const userRouter = createTRPCRouter({
     };
   }),
 
+  // Mutation for following a user, updating each users follows or followers and returning whether a follow was added
   toggleFollow: protectedProcedure
     .input(z.object({ userId: z.string() }))
     .mutation(async ({ input: { userId }, ctx }) => {
@@ -89,6 +91,7 @@ export const userRouter = createTRPCRouter({
       return { addedFollow };
     }),
 
+  // Query to check whether one user is following another
   isFollowing: protectedProcedure
     .input(z.object({ followerId: z.string(), followeeId: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -105,4 +108,40 @@ export const userRouter = createTRPCRouter({
 
       return !!isFollowing?.followers.length;
     }),
+
+  getPopularUsers: protectedProcedure.query(async ({ ctx }) => {
+    const currentUserId = ctx.session.user.id;
+
+    const popularUsers = await ctx.prisma.user.findMany({
+      take: 5,
+      where: {
+        NOT: {
+          id: currentUserId,
+        },
+      },
+      orderBy: [
+        {
+          followers: {
+            _count: 'desc',
+          },
+        },
+        {
+          id: 'desc',
+        },
+      ],
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        email: true,
+        _count: {
+          select: {
+            followers: true,
+          },
+        },
+      },
+    });
+
+    return popularUsers;
+  }),
 });
