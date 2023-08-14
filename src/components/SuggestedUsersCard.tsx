@@ -4,15 +4,21 @@ import FollowButton from './buttons/FollowButton';
 import { useSession } from 'next-auth/react';
 import ProfileImage from './ProfileImage';
 import Link from 'next/link';
+import { LoadingSpinner } from './LoadingSpinner';
 
 function SuggestedUsersCard() {
   const { data: session } = useSession();
   const { data: userList, isLoading, isError, error } = api.user.getPopularUsers.useQuery();
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading)
+    return (
+      <div className="self-start">
+        <LoadingSpinner />
+      </div>
+    );
   if (isError || !session || !userList) return <div>Error...</div>;
 
   return (
-    <div className="hidden bg-white dark:bg-dark-800 gap-6 shadow-xl rounded-lg py-6 xl:flex xl:flex-col items-center px-3 h-full w-5/6">
+    <div className="hidden bg-white dark:bg-dark-800 gap-6 shadow-xl rounded-lg py-6 xl:flex xl:flex-col items-center px-3 self-start w-5/6">
       <h3 className="card-header font-bold text-xl">Popular Users</h3>
       <ul className="flex flex-col gap-6 w-4/5">
         {userList.map((user) => (
