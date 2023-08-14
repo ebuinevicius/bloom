@@ -8,5 +8,5 @@ type LoadingSpinnerProps = {
 export function LoadingSpinner({ big = false, small = false }: LoadingSpinnerProps) {
   const sizeClasses = big ? 'w-16 h-16' : small ? 'w-6 h-6' : 'w-10 h-10';
 
-  return <ArrowPathIcon className={`animate-spin ${sizeClasses}`} />;
+  return <ArrowPathIcon className={`self-center justify-self-center animate-spin ${sizeClasses}`} />;
 }
