@@ -23,11 +23,11 @@ const FollowButton: React.FC<FollowButtonProps> = ({ followerId, followeeId }: F
           return;
         }
         let followerCountModifier = oldData.isFollowing ? -1 : 1;
-        if (oldData.isFollowing) {
-        }
+        let isFollowingNew = oldData.isFollowing ? false : true;
 
         return {
           ...oldData,
+          isFollowing: isFollowingNew,
           followerCount: oldData.followerCount + followerCountModifier,
         };
       };
