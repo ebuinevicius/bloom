@@ -23,9 +23,7 @@ export default function Home() {
 
   return (
     <div className="mt-5 grid grid-cols-1 xl:grid-cols-3 xl:place-items-center min-h-screen">
-      <div className="hidden xl:contents">
-        <ProfileCard userId={session?.user.id} onAddNewPost={() => setIsPostModalOpen(true)} />
-      </div>
+      <ProfileCard userId={session?.user.id} onAddNewPost={() => setIsPostModalOpen(true)} />
       <div className="flex gap-2 flex-col px-2 self-start items-center w-full">
         <Button className="xl:hidden" onClick={() => setIsPostModalOpen(true)}>
           New Post
