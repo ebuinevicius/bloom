@@ -48,23 +48,25 @@ export default function InfinitePostList({
   }
 
   return (
-    <InfiniteScroll
-      style={{ overflow: 'visible' }}
-      dataLength={posts.length}
-      next={fetchNewPosts}
-      hasMore={hasMore}
-      loader={
-        <div className="flex justify-center">
-          <LoadingSpinner />
+    <ul>
+      <InfiniteScroll
+        style={{ overflow: 'visible' }}
+        dataLength={posts.length}
+        next={fetchNewPosts}
+        hasMore={hasMore}
+        loader={
+          <div className="flex justify-center">
+            <LoadingSpinner />
+          </div>
+        }
+      >
+        <div className="flex flex-col items-center w-full">
+          {posts.map((post) => {
+            return <PostCard key={post.id} {...post} />;
+          })}
         </div>
-      }
-    >
-      <div className="flex flex-col items-center">
-        {posts.map((post) => {
-          return <PostCard key={post.id} {...post} />;
-        })}
-      </div>
-    </InfiniteScroll>
+      </InfiniteScroll>
+    </ul>
   );
 }
 
