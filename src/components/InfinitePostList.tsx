@@ -6,7 +6,6 @@ import { api } from '~/utils/api';
 import { HandThumbUpIcon } from '@heroicons/react/20/solid';
 import ButtonTooltip from './ButtonTooltip';
 import FollowButton from './buttons/FollowButton';
-import { contextProps } from '@trpc/react-query/shared';
 import { useSession } from 'next-auth/react';
 import ProfileImage from './ProfileImage';
 
@@ -35,7 +34,11 @@ export default function InfinitePostList({
   hasMore = false,
 }: InfinitePostListProps) {
   if (isLoading) {
-    return <LoadingSpinner />;
+    return (
+      <div className="hidden xl:block self-start w-fit h-fit">
+        <LoadingSpinner />
+      </div>
+    );
   }
   if (isError) {
     return <h1 className="self-center text-xl pt-5">Error...</h1>;
@@ -45,19 +48,23 @@ export default function InfinitePostList({
   }
 
   return (
-    <ul>
-      <InfiniteScroll
-        style={{ overflow: 'visible' }}
-        dataLength={posts.length}
-        next={fetchNewPosts}
-        hasMore={hasMore}
-        loader={<LoadingSpinner />}
-      >
+    <InfiniteScroll
+      style={{ overflow: 'visible' }}
+      dataLength={posts.length}
+      next={fetchNewPosts}
+      hasMore={hasMore}
+      loader={
+        <div className="flex justify-center">
+          <LoadingSpinner />
+        </div>
+      }
+    >
+      <div className="flex flex-col items-center">
         {posts.map((post) => {
           return <PostCard key={post.id} {...post} />;
         })}
-      </InfiniteScroll>
-    </ul>
+      </div>
+    </InfiniteScroll>
   );
 }
 
@@ -110,7 +117,7 @@ function PostCard({ id, content, createdAt, likeCount, likedByMe, user }: Post) 
   };
 
   return (
-    <div className="flex flex-col justify-between dark:bg-dark-800 p-4 mb-3 w-full h-56 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 space-y-1">
+    <div className="flex flex-col justify-between dark:bg-dark-800 p-4 mb-3 w-5/6 xl:w-full h-56 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 space-y-1">
       <div className="flex gap-5">
         <Link className="flex gap-2 items-center" href={`/profiles/${user.id}`}>
           <ProfileImage src={user.image} className="w-10 h-10 rounded-full" />
