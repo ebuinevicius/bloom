@@ -7,6 +7,7 @@ import { LoadingSpinner } from '~/components/LoadingSpinner';
 import InfinitePostList from '~/components/InfinitePostList';
 import { GetServerSidePropsContext } from 'next';
 import SuggestedUsersCard from '~/components/SuggestedUsersCard';
+import { Button } from '~/components/buttons/Button';
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -21,17 +22,18 @@ export default function Home() {
   }
 
   return (
-    <div className="mt-5 xl:grid xl:grid-cols-3 xl:place-items-center min-h-screen">
-      <div className="hidden xl:block self-start w-fit h-fit">
+    <div className="mt-5 grid grid-cols-1 xl:grid-cols-3 place-items-center min-h-screen">
+      <div className="hidden xl:contents">
         <ProfileCard userId={session?.user.id} onAddNewPost={() => setIsPostModalOpen(true)} />
       </div>
-      <div className="grid-col-start-2 grid-col-end-3 flex gap-2 flex-col w-full px-2 self-start">
+      <div className="flex gap-2 flex-col px-2 self-start items-center justify-around">
+        <Button className="xl:hidden" onClick={() => setIsPostModalOpen(true)}>
+          New Post
+        </Button>
         <RecentPosts />
         {isPostModalOpen && <CreatePostModal isOpen={isPostModalOpen} onClose={closeModal} />}
       </div>
-      <div className="hidden xl:contents self-start">
-        <SuggestedUsersCard />
-      </div>
+      <SuggestedUsersCard />
     </div>
   );
 }
