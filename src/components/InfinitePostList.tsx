@@ -35,7 +35,7 @@ export default function InfinitePostList({
 }: InfinitePostListProps) {
   if (isLoading) {
     return (
-      <div className="hidden xl:block self-start w-fit h-fit">
+      <div className="flex justify-center w-fit h-fit">
         <LoadingSpinner />
       </div>
     );
