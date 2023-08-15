@@ -72,11 +72,23 @@ export default function InfinitePostList({
 
 function PostCard({ id, content, createdAt, likeCount, likedByMe, user }: Post) {
   const session = useSession();
+  const trpcUtils = api.useContext();
 
   // Convert the post's createdAt to a "time ago" format
   const timeAgo = new Date().getTime() - new Date(createdAt).getTime(); // This gives difference in milliseconds
   const hoursAgo = Math.floor(timeAgo / (1000 * 60 * 60));
-  const trpcUtils = api.useContext();
+  let displayTime;
+  if (hoursAgo < 0) {
+    displayTime = 'Just Now';
+  } else if (hoursAgo < 1) {
+    displayTime = 'Less than an hour ago';
+  } else if (hoursAgo < 24) {
+    displayTime = `${hoursAgo}h ago`;
+  } else {
+    displayTime = `${Math.floor(hoursAgo / 24)}d ago`;
+  }
+
+  console.log(displayTime);
 
   const likePost = api.post.likePost.useMutation({
     onSuccess: async ({ addedLike }) => {
@@ -131,8 +143,7 @@ function PostCard({ id, content, createdAt, likeCount, likedByMe, user }: Post) 
           <FollowButton followerId={session.data?.user.id || ''} followeeId={user.id} />
         )}
       </div>
-
-      <p className="text-dark-500">{hoursAgo}h ago</p>
+      <p className="text-dark-500">{displayTime}</p>
       <p className="xl:text-md 2xl:text-lg font-normal">{content}</p>
       <LikeButton isLiked={likedByMe} isLoading={likePost.isLoading} likeCount={likeCount} onClick={handleLike} />
     </div>
