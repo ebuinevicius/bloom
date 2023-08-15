@@ -48,7 +48,7 @@ export default function InfinitePostList({
   }
 
   return (
-    <ul>
+    <ul className="w-full">
       <InfiniteScroll
         style={{ overflow: 'visible' }}
         dataLength={posts.length}
