@@ -36,8 +36,8 @@ function Navbar() {
   return (
     <nav className="bg-gray-100 border-gray-200 dark:border-dark-800 border-b-[1px] dark:bg-dark-900 w-2/2">
       <div className="max-w-screen-xl flex justify-around items-center mx-auto p-2 h-20">
-        <div className="flex flex-row gap-2 items-center">
-          <Link href="/" className="text-4xl font-bold">
+        <div>
+          <Link href="/" className="text-4xl font-bold text-dark-900 dark:text-white">
             Bloom
           </Link>
           <span className="text-xs text-dark-900 dark:text-white">Beta</span>
