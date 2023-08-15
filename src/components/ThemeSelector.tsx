@@ -21,13 +21,13 @@ function ThemeSelector() {
 
   return (
     <button
-      className="w-12 h-12 rounded-full flex items-center justify-center bg-gray-200 hover:bg-gray-300 dark:bg-dark-800 dark:hover:bg-gray-700"
+      className={`w-8 h-8 lg:w-12 lg:h-12 rounded-full flex items-center justify-center bg-gray-200 hover:bg-gray-300 dark:bg-dark-800 dark:hover:bg-gray-700`}
       onClick={toggleTheme}
     >
       {theme === 'light' ? (
-        <MoonIcon className="w-8 h-8 text-gray-600" />
+        <MoonIcon className={`text-gray-600 w-6 h-6 lg:w-8 lg:h-8`} />
       ) : (
-        <SunIcon className="w-8 h-8 text-white-400" />
+        <SunIcon className={`text-white-400 w-6 h-6 lg:w-8 lg:h-8`} />
       )}
     </button>
   );
