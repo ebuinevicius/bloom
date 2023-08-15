@@ -148,17 +148,21 @@ type LikeButtonProps = {
 
 function LikeButton({ isLiked, isLoading, likeCount, onClick }: LikeButtonProps) {
   if (isLoading) {
-    return <LoadingSpinner small={true} />;
+    return (
+      <div className="flex items-center justify-center px-2 py-1 w-fit">
+        <LoadingSpinner small={true} />
+      </div>
+    );
   }
   return (
     <ButtonTooltip tooltip={isLiked ? 'Remove like 💔' : 'Like this post ❤️'}>
       <button
         onClick={onClick}
-        className={`flex  gap-2 rounded-md ${
+        className={`flex gap-2 rounded-md ${
           isLiked
             ? 'bg-green-600 dark:bg-green-300 hover:bg-green-700 dark:hover:bg-green-400'
             : 'bg-slate-300 hover:bg-slate-400 dark:bg-dark-700 dark:hover:bg-dark-600'
-        } py-1 px-2`}
+        } px-2 py-1`}
       >
         <HandThumbUpIcon
           className={`h-6 w-6 ${isLiked ? 'text-white dark:text-black' : 'text-black dark:text-white'}`}
