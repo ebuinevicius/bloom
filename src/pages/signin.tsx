@@ -9,7 +9,7 @@ export default function SignIn({ providers }: InferGetServerSidePropsType<typeof
   return (
     <div className="grid place-items-center gap-4 p-10 text-center">
       <h1 className="text-2xl lg:text-4xl font-bold">Sign in to your account.</h1>
-      <div className="flex px-6 py-4 justify-center bg-white border border-gray-200 rounded-lg shadow dark:bg-dark-800 dark:border-gray-700 lg:w-4/6 lg:py-10 2xl:w-1/2">
+      <div className="flex px-6 py-4 justify-center bg-white border border-gray-200 rounded-lg shadow dark:bg-dark-800 dark:border-gray-700 w-3/6 lg:w-4/6 lg:py-10 2xl:w-1/2">
         <div className="rounded-lg bg-slate-800 hover:bg-slate-700 dark:bg-white dark:hover:bg-gray-400 w-4/6 flex justify-center">
           {Object.values(providers).map((provider) => (
             <div key={provider.name} className="">
