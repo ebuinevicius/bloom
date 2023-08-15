@@ -23,11 +23,9 @@ const ProfilePage: NextPage<ProfilePageProps> = ({ id }) => {
   );
 
   return (
-    <div className="mt-5 xl:grid xl:grid-cols-3 xl:place-items-center min-h-screen">
-      <div className="hidden xl:block self-start w-fit h-fit">
-        <ProfileCard userId={id} onAddNewPost={() => setIsPostModalOpen(true)} />
-      </div>
-      <div className="grid-col-start-2 grid-col-end-3 flex gap-2 flex-col w-full px-2 self-start">
+    <div className="mt-5 grid-cols-1 grid xl:grid-cols-3 xl:place-items-center min-h-screen">
+      <ProfileCard userId={id} onAddNewPost={() => setIsPostModalOpen(true)} />
+      <div className="flex gap-2 flex-col px-2 self-start items-center justify-around">
         <InfinitePostList
           posts={posts.data?.pages.flatMap((page) => page.posts)}
           isError={posts.isError}
@@ -36,9 +34,7 @@ const ProfilePage: NextPage<ProfilePageProps> = ({ id }) => {
           fetchNewPosts={posts.fetchNextPage}
         />
       </div>
-      <div className="hidden xl:contents self-start">
-        <SuggestedUsersCard />
-      </div>
+      <SuggestedUsersCard />
       {isPostModalOpen && <CreatePostModal isOpen={isPostModalOpen} onClose={closeModal} />}
     </div>
   );
