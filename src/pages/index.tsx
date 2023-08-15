@@ -22,7 +22,7 @@ export default function Home() {
   }
 
   return (
-    <div className="mt-5 grid grid-cols-1 xl:grid-cols-3 place-items-center min-h-screen">
+    <div className="mt-5 grid grid-cols-1 xl:grid-cols-3 xl:place-items-center min-h-screen">
       <div className="hidden xl:contents">
         <ProfileCard userId={session?.user.id} onAddNewPost={() => setIsPostModalOpen(true)} />
       </div>
