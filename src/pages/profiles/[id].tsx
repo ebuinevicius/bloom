@@ -25,7 +25,7 @@ const ProfilePage: NextPage<ProfilePageProps> = ({ id }) => {
   return (
     <div className="mt-5 grid-cols-1 grid xl:grid-cols-3 xl:place-items-center min-h-screen">
       <ProfileCard userId={id} onAddNewPost={() => setIsPostModalOpen(true)} />
-      <div className="flex gap-2 flex-col px-2 self-start items-center justify-around">
+      <div className="flex gap-2 flex-col px-2 self-start items-center w-full">
         <InfinitePostList
           posts={posts.data?.pages.flatMap((page) => page.posts)}
           isError={posts.isError}
