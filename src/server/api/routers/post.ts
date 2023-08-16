@@ -3,11 +3,13 @@ import { z } from 'zod';
 import { createTRPCRouter, publicProcedure, protectedProcedure } from '~/server/api/trpc';
 
 export const postRouter = createTRPCRouter({
+  // Creates a post with the specified content and attaches it to the current user
   create: protectedProcedure.input(z.object({ content: z.string() })).mutation(async ({ input: { content }, ctx }) => {
     const post = await ctx.prisma.post.create({ data: { content, userId: ctx.session.user.id } });
     return post;
   }),
 
+  // Returns an infinite feed of posts from users that the current user is following and their own posts
   infiniteFeed: protectedProcedure
     .input(
       z.object({
@@ -84,6 +86,7 @@ export const postRouter = createTRPCRouter({
       };
     }),
 
+  // Returns an infinite feed of the specified user's posts using a cursor
   infiniteProfileFeed: protectedProcedure
     .input(
       z.object({
@@ -150,6 +153,7 @@ export const postRouter = createTRPCRouter({
       };
     }),
 
+  // Mutation to like/unlike a post, removing the like from the database if it already exists, otherwise adding it
   likePost: protectedProcedure.input(z.object({ postId: z.string() })).mutation(async ({ input: { postId }, ctx }) => {
     const data = { userId: ctx.session.user.id, postId: postId };
 
