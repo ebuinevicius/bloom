@@ -1,11 +1,11 @@
 import React from 'react';
-import ProfileImage from './ProfileImage';
+import ProfileImage from '../ProfileImage';
 import { useSession } from 'next-auth/react';
-import { Button } from './buttons/Button';
+import { Button } from '../buttons/Button';
 import { api } from '~/utils/api';
-import { LoadingSpinner } from './LoadingSpinner';
+import { LoadingSpinner } from '../LoadingSpinner';
 import Link from 'next/link';
-import FollowButton from './buttons/FollowButton';
+import FollowButton from '../buttons/FollowButton';
 
 interface ProfileCardProps {
   onAddNewPost?: () => void;
@@ -25,7 +25,7 @@ function ProfileCard({ onAddNewPost, userId }: ProfileCardProps) {
     );
   }
   return (
-    <div className="bg-white dark:bg-dark-800 shadow-xl rounded-lg py-3 hidden xl:flex flex-col items-center px-3 h-fit w-fit self-start">
+    <div className=" bg-white dark:bg-dark-800 shadow-xl rounded-lg py-3 flex flex-col items-center px-3 h-fit w-5/6 xl:w-fit  self-start justify-self-center">
       <ProfileImage src={userProfile.image} className="h-20 w-20" />
       <div className="p-2 flex items-center flex-col gap-5">
         <h3 className="text-center text-2xl font-bold text-gray-900 dark:text-white leading-8">{userProfile.name}</h3>
@@ -57,8 +57,8 @@ function ProfileCard({ onAddNewPost, userId }: ProfileCardProps) {
             </Button>
           </>
         ) : (
-          <div className="w-5/6  flex items-center justify-center text-2xl">
-            <FollowButton followerId={session?.user.id} followeeId={userProfile.id} />
+          <div className="w-5/6 flex items-center justify-center text-2xl">
+            <FollowButton followerId={session?.user.id} followeeId={userProfile.id} large />
           </div>
         )}
       </div>
