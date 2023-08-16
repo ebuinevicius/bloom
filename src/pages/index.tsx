@@ -1,13 +1,14 @@
 import { getSession, useSession } from 'next-auth/react';
 import { useState } from 'react';
 import CreatePostModal from '~/components/CreatePostModal';
-import ProfileCard from '~/components/ProfileCard';
+import ProfileCard from '~/components/profiles/ProfileCard';
 import { api } from '~/utils/api';
 import { LoadingSpinner } from '~/components/LoadingSpinner';
 import InfinitePostList from '~/components/InfinitePostList';
 import { GetServerSidePropsContext } from 'next';
 import SuggestedUsersCard from '~/components/SuggestedUsersCard';
 import { Button } from '~/components/buttons/Button';
+import MobileProfileCard from '~/components/profiles/MobileProfileCard';
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -23,8 +24,13 @@ export default function Home() {
 
   return (
     <div className="mt-5 grid grid-cols-1 xl:grid-cols-3 xl:place-items-center min-h-screen">
-      <ProfileCard userId={session?.user.id} onAddNewPost={() => setIsPostModalOpen(true)} />
-      <div className="flex gap-2 flex-col px-2 self-start items-center w-full">
+      <div className="hidden xl:contents">
+        <ProfileCard userId={session?.user.id} onAddNewPost={() => setIsPostModalOpen(true)} />
+      </div>
+      <div className="flex gap-2 flex-col px-2 self-start items-center justify-center w-full">
+        <div className="xl:hidden w-5/6">
+          <MobileProfileCard userId={session?.user.id} onAddNewPost={() => setIsPostModalOpen(true)} />
+        </div>
         <Button className="xl:hidden" onClick={() => setIsPostModalOpen(true)}>
           New Post
         </Button>
