@@ -8,6 +8,7 @@ import ButtonTooltip from './ButtonTooltip';
 import FollowButton from './buttons/FollowButton';
 import { useSession } from 'next-auth/react';
 import ProfileImage from './ProfileImage';
+import SmallFollowButton from './buttons/SmallFollowButton';
 
 type Post = {
   id: string;
@@ -140,7 +141,14 @@ function PostCard({ id, content, createdAt, likeCount, likedByMe, user }: Post) 
           </div>
         </Link>
         {user.id != session?.data?.user.id && (
-          <FollowButton followerId={session.data?.user.id || ''} followeeId={user.id} />
+          <>
+            <div className="hidden xl:contents">
+              <FollowButton followerId={session.data?.user.id || ''} followeeId={user.id} />
+            </div>
+            <div className="contents xl:hidden">
+              <SmallFollowButton followerId={session.data?.user.id || ''} followeeId={user.id} />
+            </div>
+          </>
         )}
       </div>
       <p className="text-dark-500">{displayTime}</p>

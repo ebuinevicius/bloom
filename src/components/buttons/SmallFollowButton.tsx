@@ -3,21 +3,14 @@ import { api } from '~/utils/api';
 import { LoadingSpinner } from '../LoadingSpinner';
 import { PlusCircleIcon, XCircleIcon } from '@heroicons/react/20/solid';
 
-interface FollowButtonProps {
+interface SmallFollowButtonProps {
   followerId: string; // Logged-in user's ID
   followeeId: string; // Profile user's ID
-  small?: boolean;
-  large?: boolean;
 }
 
-const FollowButton: React.FC<FollowButtonProps> = ({
-  followerId,
-  followeeId,
-  large = false,
-  small = false,
-}: FollowButtonProps) => {
+const SmallFollowButton: React.FC<SmallFollowButtonProps> = ({ followerId, followeeId }: SmallFollowButtonProps) => {
   // TODO add variants based on size for styling
-  const sizeClasses = small ? 'w-12' : large ? 'w-28' : 'w-24';
+
   const { data: isFollowing, isLoading } = api.user.isFollowing.useQuery({ followerId, followeeId });
   const trpcUtils = api.useContext();
 
@@ -65,14 +58,15 @@ const FollowButton: React.FC<FollowButtonProps> = ({
   return (
     <button
       disabled={toggleFollow.isLoading}
-      className={`rounded py-2 px-3 ${sizeClasses} font-semibold flex items-center justify-center overflow-hidden text-white ${
+      className={`rounded py-2 px-3 w-fit 2xl:w-28 font-semibold flex items-center justify-center overflow-hidden text-white ${
         isFollowing ? 'bg-red-500' : '  bg-blue-500'
       }`}
       onClick={handleFollowToggle}
     >
-      <span>{isFollowing ? 'Unfollow' : 'Follow'}</span>
+      <PlusCircleIcon className={`h-6 w-6 2xl:hidden ${isFollowing ? 'hidden' : ''}`} />
+      <XCircleIcon className={`h-6 w-6 2xl:hidden ${isFollowing ? '' : 'hidden'}`} />
     </button>
   );
 };
 
-export default FollowButton;
+export default SmallFollowButton;
