@@ -13,7 +13,6 @@ export const userRouter = createTRPCRouter({
         id: true,
         name: true,
         image: true,
-        email: true,
         followers: {
           where: {
             id: ctx.session.user.id,
@@ -133,7 +132,6 @@ export const userRouter = createTRPCRouter({
         id: true,
         name: true,
         image: true,
-        email: true,
         _count: {
           select: {
             followers: true,
