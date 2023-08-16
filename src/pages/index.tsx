@@ -27,13 +27,10 @@ export default function Home() {
       <div className="hidden xl:contents">
         <ProfileCard userId={session?.user.id} onAddNewPost={() => setIsPostModalOpen(true)} />
       </div>
-      <div className="flex gap-2 flex-col px-2 self-start items-center justify-center w-full">
-        <div className="xl:hidden w-5/6">
+      <div className="flex gap-6 flex-col px-2 self-start items-center w-full">
+        <div className="xl:hidden w-full justify-center flex">
           <MobileProfileCard userId={session?.user.id} onAddNewPost={() => setIsPostModalOpen(true)} />
         </div>
-        <Button className="xl:hidden" onClick={() => setIsPostModalOpen(true)}>
-          New Post
-        </Button>
         <RecentPosts />
         {isPostModalOpen && <CreatePostModal isOpen={isPostModalOpen} onClose={closeModal} />}
       </div>
