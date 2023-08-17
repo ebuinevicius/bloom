@@ -4,7 +4,6 @@ import { LoadingSpinner } from './LoadingSpinner';
 import Link from 'next/link';
 import { api } from '~/utils/api';
 import { HandThumbUpIcon } from '@heroicons/react/20/solid';
-import ButtonTooltip from './ButtonTooltip';
 import FollowButton from './buttons/FollowButton';
 import { useSession } from 'next-auth/react';
 import ProfileImage from './ProfileImage';
@@ -75,7 +74,6 @@ function PostCard({ id, content, createdAt, likeCount, likedByMe, user }: Post) 
   const [isLiked, setIsLiked] = useState(likedByMe);
   const [numLikes, setNumLikes] = useState(likeCount);
   const session = useSession();
-  const trpcUtils = api.useContext();
 
   // Convert the post's createdAt to a "time ago" format
   const timeAgo = new Date().getTime() - new Date(createdAt).getTime(); // This gives difference in milliseconds
