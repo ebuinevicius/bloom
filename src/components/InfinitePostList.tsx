@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { LoadingSpinner } from './LoadingSpinner';
 import Link from 'next/link';
@@ -72,6 +72,8 @@ export default function InfinitePostList({
 }
 
 function PostCard({ id, content, createdAt, likeCount, likedByMe, user }: Post) {
+  const [isLiked, setIsLiked] = useState(likedByMe);
+  const [numLikes, setNumLikes] = useState(likeCount);
   const session = useSession();
   const trpcUtils = api.useContext();
 
@@ -89,71 +91,41 @@ function PostCard({ id, content, createdAt, likeCount, likedByMe, user }: Post) 
     displayTime = `${Math.floor(hoursAgo / 24)}d ago`;
   }
 
-  console.log(displayTime);
-
-  const likePost = api.post.likePost.useMutation({
-    onSuccess: async ({ addedLike }) => {
-      const likeModifier = addedLike ? 1 : -1;
-
-      const updateFeed: Parameters<typeof trpcUtils.post.infiniteFeed.setInfiniteData>[1] = (oldData) => {
-        if (oldData == null) {
-          return;
-        }
-
-        return {
-          ...oldData,
-          pages: oldData.pages.map((page) => {
-            return {
-              ...page,
-              posts: page.posts.map((post) => {
-                if (post.id === id) {
-                  return {
-                    ...post,
-                    likeCount: post.likeCount + likeModifier,
-                    likedByMe: addedLike,
-                  };
-                }
-
-                return post;
-              }),
-            };
-          }),
-        };
-      };
-
-      // Update feeds to have the new post and
-      trpcUtils.post.infiniteFeed.setInfiniteData({}, updateFeed);
-      trpcUtils.post.infiniteProfileFeed.setInfiniteData({ userId: user.id }, updateFeed);
-    },
-  });
+  const likePost = api.post.likePost.useMutation();
 
   const handleLike = () => {
+    // The following two operations must occur in this order
+    isLiked ? setNumLikes(numLikes - 1) : setNumLikes(numLikes + 1);
+    setIsLiked(!isLiked);
     likePost.mutate({ postId: id });
   };
 
   return (
     <div className="flex flex-col justify-between dark:bg-dark-800 p-4 mb-3 w-5/6 xl:w-full h-56 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 space-y-1">
-      <div className="flex gap-5">
-        <Link className="flex gap-2 items-center" href={`/profiles/${user.id}`}>
-          <ProfileImage src={user.image} className="w-10 h-10 rounded-full" />
-          <div>
-            <h4 className="font-bold">{user.name}</h4>
-          </div>
-        </Link>
-        {user.id != session?.data?.user.id && (
-          <>
-            <div className="hidden xl:contents">
-              <FollowButton followerId={session.data?.user.id || ''} followeeId={user.id} />
+      <div>
+        <div className="flex gap-5">
+          <Link className="flex gap-2 items-center" href={`/profiles/${user.id}`}>
+            <ProfileImage src={user.image} className="w-10 h-10 rounded-full" />
+            <div>
+              <h4 className="font-bold">{user.name}</h4>
             </div>
-            <div className="contents xl:hidden">
-              <SmallFollowButton followerId={session.data?.user.id || ''} followeeId={user.id} />
-            </div>
-          </>
-        )}
+          </Link>
+          {user.id != session?.data?.user.id && (
+            <>
+              <div className="hidden xl:contents">
+                <FollowButton followerId={session.data?.user.id || ''} followeeId={user.id} />
+              </div>
+              <div className="contents xl:hidden">
+                <SmallFollowButton followerId={session.data?.user.id || ''} followeeId={user.id} />
+              </div>
+            </>
+          )}
+        </div>
+        <p className="text-dark-500">{displayTime}</p>
       </div>
-      <p className="text-dark-500">{displayTime}</p>
+
       <p className="xl:text-md 2xl:text-lg font-normal">{content}</p>
-      <LikeButton isLiked={likedByMe} isLoading={likePost.isLoading} likeCount={likeCount} onClick={handleLike} />
+      <LikeButton isLiked={isLiked} isLoading={likePost.isLoading} likeCount={numLikes} onClick={handleLike} />
     </div>
   );
 }
@@ -166,30 +138,33 @@ type LikeButtonProps = {
 };
 
 function LikeButton({ isLiked, isLoading, likeCount, onClick }: LikeButtonProps) {
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center px-2 py-1 w-fit">
-        <LoadingSpinner small={true} />
-      </div>
-    );
-  }
+  const [showTooltip, setShowTooltip] = useState(false);
+
   return (
-    <ButtonTooltip tooltip={isLiked ? 'Remove like 💔' : 'Like this post ❤️'}>
-      <button
-        onClick={onClick}
-        className={`flex gap-2 rounded-md ${
-          isLiked
-            ? 'bg-green-600 dark:bg-green-300 hover:bg-green-700 dark:hover:bg-green-400'
-            : 'bg-slate-300 hover:bg-slate-400 dark:bg-dark-700 dark:hover:bg-dark-600'
-        } px-2 py-1`}
-      >
-        <HandThumbUpIcon
-          className={`h-6 w-6 ${isLiked ? 'text-white dark:text-black' : 'text-black dark:text-white'}`}
-        />
-        <p className={`${isLiked ? 'text-white dark:text-black' : 'text-black dark:text-white'} font-semibold`}>
-          {likeCount}
-        </p>
-      </button>
-    </ButtonTooltip>
+    <button
+      disabled={isLoading}
+      onClick={onClick}
+      onMouseEnter={() => setShowTooltip(true)}
+      onMouseLeave={() => setShowTooltip(false)}
+      className={`relative w-fit flex gap-2 rounded-md ${
+        isLiked
+          ? 'bg-green-600 dark:bg-green-300 hover:bg-green-700 dark:hover:bg-green-400'
+          : 'bg-slate-300 hover:bg-slate-400 dark:bg-dark-700 dark:hover:bg-dark-600'
+      } px-2 py-1`}
+    >
+      <HandThumbUpIcon className={`h-6 w-6 ${isLiked ? 'text-white dark:text-black' : 'text-black dark:text-white'}`} />
+      <p className={`${isLiked ? 'text-white dark:text-black' : 'text-black dark:text-white'} font-semibold`}>
+        {likeCount}
+      </p>
+      {showTooltip && (
+        <div
+          className={`${
+            isLiked ? 'w-36' : 'w-28'
+          }  text-base z-50 absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-2 py-1 bg-dark-500 dark:bg-dark-900 text-white rounded-md shadow-lg`}
+        >
+          {isLiked ? <span>Remove like 💔</span> : <span>Like post ❤️</span>}
+        </div>
+      )}
+    </button>
   );
 }
